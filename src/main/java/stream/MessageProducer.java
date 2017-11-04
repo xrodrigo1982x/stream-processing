@@ -9,7 +9,6 @@ import stream.serialization.SerDes;
 
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 import static java.util.stream.IntStream.range;
 
@@ -18,9 +17,11 @@ public class MessageProducer extends KafkaClient {
     private KafkaProducer<String, InputTweet> producer;
     private Faker faker;
     private List<String> users;
+    private static Long INTERVAL = 1000l;
 
     public static void main(String[] args) {
         MessageProducer messageProducer = new MessageProducer();
+        Random random = new Random(System.nanoTime());
         while (true) {
             messageProducer.produce();
         }
@@ -42,6 +43,12 @@ public class MessageProducer extends KafkaClient {
                 .date(new Date())
                 .build();
         producer.send(new ProducerRecord<>("new-tweets", tweet));
+
+        try {
+            Thread.sleep(INTERVAL + faker.number().numberBetween(0, INTERVAL));
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private String tweetText() {
