@@ -3,13 +3,14 @@ package stream.serialization;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.kafka.common.serialization.Deserializer;
+import org.apache.kafka.common.serialization.Serde;
 import org.apache.kafka.common.serialization.Serializer;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.Map;
 
-public class SerDes<T> implements Deserializer<T>, Serializer<T> {
+public class SerDes<T> implements Deserializer<T>, Serializer<T>, Serde<T> {
 
     private ObjectMapper om;
     private Class<T> clazz;
@@ -45,5 +46,15 @@ public class SerDes<T> implements Deserializer<T>, Serializer<T> {
     @Override
     public void close() {
 
+    }
+
+    @Override
+    public Serializer<T> serializer() {
+        return this;
+    }
+
+    @Override
+    public Deserializer<T> deserializer() {
+        return this;
     }
 }
